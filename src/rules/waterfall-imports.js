@@ -1,3 +1,5 @@
+const { sortByLength, joinNodesSource } = require('../utils')
+
 const WaterfallImports = {
   meta: {
     type: 'suggestion',
@@ -12,30 +14,18 @@ const WaterfallImports = {
   create(context) {
     const src = context.getSourceCode()
 
-    function getLineLength(importDeclaration) {
-      const loc = importDeclaration.loc.start
-      const lineText = src.lines[loc.line - 1]
-      return lineText.length
-    }
-  
     function isImportDeclaration(node) {
       return node.type === 'ImportDeclaration'
-    }
-  
-    function sortImportsByLength(nodeA, nodeB) {
-      const lengthA = getLineLength(nodeA);
-      const lengthB = getLineLength(nodeB);
-      return lengthA - lengthB;
     }
 
     return {
       'Program:exit': function(node) {
         const importDeclarations = node.body.filter(isImportDeclaration)
         if (importDeclarations.length === 0) return
-        const sortedImportDeclarations = [...importDeclarations].sort(sortImportsByLength)
+        const sortedImportDeclarations = [...importDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
-        const importDeclarationsJoinedValue = importDeclarations.map(node => node.source.value).join('')
-        const sortedImportDeclarationsJoinedValue = sortedImportDeclarations.map(node => node.source.value).join('')
+        const importDeclarationsJoinedValue = joinNodesSource(importDeclarations, src)
+        const sortedImportDeclarationsJoinedValue = joinNodesSource(sortedImportDeclarations, src)
 
         if (sortedImportDeclarationsJoinedValue !== importDeclarationsJoinedValue) {
           const text = sortedImportDeclarations.map(node => src.getText(node)).join('\n')
