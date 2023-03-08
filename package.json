@@ -1,5 +1,5 @@
 {
-  "name": "eslint-waterfall",
+  "name": "eslint-plugin-waterfall",
   "version": "1.0.0",
   "description": "Write code like waterfall. more beautiful more readable",
   "main": "src/index.js",
