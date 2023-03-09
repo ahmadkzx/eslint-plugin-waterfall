@@ -21,7 +21,7 @@ const WaterfallArguments = {
     return {
       'Program:exit': function(node) {
         const argumentDeclarations = node.body.filter(isFunctionDeclaration).map(node => node.params)[0]
-        if (argumentDeclarations.length === 0) return
+        if (!argumentDeclarations || argumentDeclarations.length === 0) return
         const sortedArgumentDeclarations = [...argumentDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
         const argumentDeclarationsText = joinNodesSource(argumentDeclarations, src)
