@@ -1,4 +1,4 @@
-const { sortByLength, getNodesText } = require('../utils')
+const { sortByLength, getReplaceRange, getNodesTexts } = require('../utils')
 
 const WaterfallObjects = {
   meta: {
@@ -26,12 +26,12 @@ const WaterfallObjects = {
         if (!properties || properties.length === 0) return
         const sortedProperties = [...properties].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
-        const propertiesText = getNodesText(properties, src)
-        const sortedPropertiesText = getNodesText(sortedProperties, src)
+        const propertiesText = getNodesTexts(properties, src).join('')
+        const sortedPropertiesText = getNodesTexts(sortedProperties, src).join('')
 
         if (sortedPropertiesText !== propertiesText) {
-          const text = sortedProperties.map(node => src.getText(node))
-          const range = [properties[0].range[0], properties[properties.length - 1].range[1]]
+          const text = getNodesTexts(sortedProperties, src)
+          const range = getReplaceRange(properties)
           
           context.report({
             node,
@@ -45,16 +45,16 @@ const WaterfallObjects = {
     }
     return {
       'ObjectExpression:exit': function(node) {
-        const objectDeclarations = node.properties
-        if (objectDeclarations.length === 0) return
-        const sortedObjectDeclarations = [...objectDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
+        const properties = node.properties
+        if (properties.length === 0) return
+        const sortedProperties = [...properties].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
-        const objectDeclarationsText = getNodesText(objectDeclarations, src)
-        const sortedObjectDeclarationsText = getNodesText(sortedObjectDeclarations, src)
+        const propertiesText = getNodesTexts(properties, src).join('')
+        const sortedPropertiesText = getNodesTexts(sortedProperties, src).join('')
 
-        if (sortedObjectDeclarationsText !== objectDeclarationsText) {
-          const text = sortedObjectDeclarations.map(node => src.getText(node))
-          const range = [objectDeclarations[0].range[0], objectDeclarations[objectDeclarations.length - 1].range[1]]
+        if (sortedPropertiesText !== propertiesText) {
+          const text = getNodesTexts(sortedProperties, src)
+          const range = getReplaceRange(properties)
           
           context.report({
             node,

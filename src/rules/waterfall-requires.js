@@ -1,4 +1,4 @@
-const { sortByLength, getNodesText } = require('../utils')
+const { sortByLength, getReplaceRange, getNodesTexts } = require('../utils')
 
 const WaterfallRequires = {
   meta: {
@@ -34,12 +34,12 @@ const WaterfallRequires = {
         if (requireDeclarations.length === 0) return
         const sortedRequireDeclarations = [...requireDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
-        const requireDeclarationsText = getNodesText(requireDeclarations, src)
-        const sortedRequireDeclarationsText = getNodesText(sortedRequireDeclarations, src)
+        const requireDeclarationsText = getNodesTexts(requireDeclarations, src).join('')
+        const sortedRequireDeclarationsText = getNodesTexts(sortedRequireDeclarations, src).join('')
 
         if (sortedRequireDeclarationsText !== requireDeclarationsText) {
-          const text = sortedRequireDeclarations.map(node => src.getText(node)).join('\n')
-          const range = [requireDeclarations[0].range[0], requireDeclarations[requireDeclarations.length - 1].range[1]]
+          const text = getNodesTexts(sortedRequireDeclarations, src).join('\n')
+          const range = getReplaceRange(requireDeclarations)
           
           context.report({
             node,

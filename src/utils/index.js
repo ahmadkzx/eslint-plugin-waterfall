@@ -10,12 +10,17 @@ function sortByLength(nodeA, nodeB, src) {
   return lengthA - lengthB;
 }
 
-function getNodesText(nodes, src) {
-  return nodes.map(node => src.getText(node)).join('')
+function getNodesTexts(nodes, src) {
+  return nodes.map(node => src.getText(node))
+}
+
+function getReplaceRange(nodes) {
+  return [nodes[0].range[0], nodes[nodes.length - 1].range[1]]
 }
 
 module.exports = {
   sortByLength,
-  getNodesText,
   getLineLength,
+  getNodesTexts,
+  getReplaceRange,
 }
