@@ -10,12 +10,12 @@ function sortByLength(nodeA, nodeB, src) {
   return lengthA - lengthB;
 }
 
-function joinNodesSource(nodes, src) {
+function getNodesText(nodes, src) {
   return nodes.map(node => src.getText(node)).join('')
 }
 
 module.exports = {
   sortByLength,
+  getNodesText,
   getLineLength,
-  joinNodesSource
 }

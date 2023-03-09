@@ -1,4 +1,4 @@
-const { sortByLength, joinNodesSource } = require('../utils')
+const { sortByLength, getNodesText } = require('../utils')
 
 const WaterfallImports = {
   meta: {
@@ -24,8 +24,8 @@ const WaterfallImports = {
         if (importDeclarations.length === 0) return
         const sortedImportDeclarations = [...importDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
-        const importDeclarationsText = joinNodesSource(importDeclarations, src)
-        const sortedImportDeclarationsText = joinNodesSource(sortedImportDeclarations, src)
+        const importDeclarationsText = getNodesText(importDeclarations, src)
+        const sortedImportDeclarationsText = getNodesText(sortedImportDeclarations, src)
 
         if (sortedImportDeclarationsText !== importDeclarationsText) {
           const text = sortedImportDeclarations.map(node => src.getText(node)).join('\n')

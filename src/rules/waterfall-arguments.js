@@ -1,4 +1,4 @@
-const { sortByLength, joinNodesSource } = require('../utils')
+const { sortByLength, getNodesText } = require('../utils')
 
 const WaterfallArguments = {
   meta: {
@@ -24,8 +24,8 @@ const WaterfallArguments = {
         if (!argumentDeclarations || argumentDeclarations.length === 0) return
         const sortedArgumentDeclarations = [...argumentDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
-        const argumentDeclarationsText = joinNodesSource(argumentDeclarations, src)
-        const sortedArgumentDeclarationsText = joinNodesSource(sortedArgumentDeclarations, src)
+        const argumentDeclarationsText = getNodesText(argumentDeclarations, src)
+        const sortedArgumentDeclarationsText = getNodesText(sortedArgumentDeclarations, src)
 
         if (sortedArgumentDeclarationsText !== argumentDeclarationsText) {
           const text = sortedArgumentDeclarations.map(node => src.getText(node))
