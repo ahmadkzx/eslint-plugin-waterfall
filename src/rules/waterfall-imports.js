@@ -24,10 +24,10 @@ const WaterfallImports = {
         if (importDeclarations.length === 0) return
         const sortedImportDeclarations = [...importDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
-        const importDeclarationsJoinedValue = joinNodesSource(importDeclarations, src)
-        const sortedImportDeclarationsJoinedValue = joinNodesSource(sortedImportDeclarations, src)
+        const importDeclarationsText = joinNodesSource(importDeclarations, src)
+        const sortedImportDeclarationsText = joinNodesSource(sortedImportDeclarations, src)
 
-        if (sortedImportDeclarationsJoinedValue !== importDeclarationsJoinedValue) {
+        if (sortedImportDeclarationsText !== importDeclarationsText) {
           const text = sortedImportDeclarations.map(node => src.getText(node)).join('\n')
           const range = [importDeclarations[0].range[0], importDeclarations[importDeclarations.length - 1].range[1]]
           

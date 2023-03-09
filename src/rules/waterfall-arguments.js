@@ -24,10 +24,10 @@ const WaterfallArguments = {
         if (argumentDeclarations.length === 0) return
         const sortedArgumentDeclarations = [...argumentDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
-        const argumentDeclarationsJoinedValue = joinNodesSource(argumentDeclarations, src)
-        const sortedArgumentDeclarationsJoinedValue = joinNodesSource(sortedArgumentDeclarations, src)
+        const argumentDeclarationsText = joinNodesSource(argumentDeclarations, src)
+        const sortedArgumentDeclarationsText = joinNodesSource(sortedArgumentDeclarations, src)
 
-        if (sortedArgumentDeclarationsJoinedValue !== argumentDeclarationsJoinedValue) {
+        if (sortedArgumentDeclarationsText !== argumentDeclarationsText) {
           const text = sortedArgumentDeclarations.map(node => src.getText(node))
           const range = [argumentDeclarations[0].range[0], argumentDeclarations[argumentDeclarations.length - 1].range[1]]
           

@@ -31,11 +31,10 @@ const WaterfallRequires = {
         if (requireDeclarations.length === 0) return
         const sortedRequireDeclarations = [...requireDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
-        
-        const requireDeclarationsJoinedValue = joinNodesSource(requireDeclarations, src)
-        const sortedRequireDeclarationsJoinedValue = joinNodesSource(sortedRequireDeclarations, src)
+        const requireDeclarationsText = joinNodesSource(requireDeclarations, src)
+        const sortedRequireDeclarationsText = joinNodesSource(sortedRequireDeclarations, src)
 
-        if (sortedRequireDeclarationsJoinedValue !== requireDeclarationsJoinedValue) {
+        if (sortedRequireDeclarationsText !== requireDeclarationsText) {
           const text = sortedRequireDeclarations.map(node => src.getText(node)).join('\n')
           const range = [requireDeclarations[0].range[0], requireDeclarations[requireDeclarations.length - 1].range[1]]
           
