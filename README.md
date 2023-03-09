@@ -1,7 +1,7 @@
-## Eslint Plugin Waterfall
-Write code like waterfall. more beautiful more readable.  
+## ESLint Plugin Waterfall
+Write code like waterfall. more beautiful more readable.
 
-![Group 1](https://user-images.githubusercontent.com/69081259/224127299-f1ebdfbf-1bf7-4f63-9897-27879997e24a.svg)
+![ESLint Plugin Waterfall](https://user-images.githubusercontent.com/69081259/224127299-f1ebdfbf-1bf7-4f63-9897-27879997e24a.svg)
 
 ### Installation
 
@@ -22,6 +22,58 @@ Then configure the rules you want to use under the rules section:
       "rules": {
         "waterfall/waterfall-objects": "error,
         "waterfall/waterfall-imports": "error",
-        "waterfall/waterfall-requires": "error"
+        "waterfall/waterfall-requires": "error",
       }
     }
+
+### Rules
+waterfall-objects:
+
+    // ℹ️ Before:
+    const person = {
+      username: 'test',
+      name: 'jason',
+      email: 'json@gmail.com',
+      country: 'usa',
+    }
+    
+    // ✅ After:
+    const peson = {
+      name: 'jason',
+      country: 'usa',
+      username: 'test',
+      email: 'jason@gmail.com',
+    }
+
+waterfall-imports:
+
+    // ℹ️ Before:
+    import { useContext, useEffect, useState } from 'react'
+    import Link from 'next/link'
+    import { useRouter } from 'next/router'
+    import axios from 'axios'
+    import { getAccessToken, clearAuthCookies } from './auth'
+    import Error from 'next/error'
+    
+    // ✅ After:
+    import axios from 'axios'
+    import Link from 'next/link'
+    import Error from 'next/error'
+    import { useRouter } from 'next/router'
+    import { useContext, useEffect, useState } from 'react'
+    import { getAccessToken, clearAuthCookies } from './auth'
+
+
+waterfall-requires:
+
+    // ℹ️ Before:
+    const path = require('path')
+    const fs = require('fs')
+    const express = require('express')
+    const auth = require('./auth')
+
+    // ✅ After:
+    const fs = require('fs')
+    const path = require('path')
+    const auth = require('./auth')
+    const express = reqiure('express')
