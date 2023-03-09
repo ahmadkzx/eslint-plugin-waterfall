@@ -20,6 +20,9 @@ const WaterfallRequires = {
         const textParts = text.split('=')
 
         return textParts[1] && textParts[1].trim().startsWith('require(')
+
+      } else if (node.type === 'ExpressionStatement') {
+        return node.expression && node.expression.callee.name === 'require'
       }
 
       return false
