@@ -18,7 +18,11 @@ const WaterfallObjects = {
       return node.type === 'ObjectPattern'
     }
 
-    function FunctionDeclarationHandler(node) {
+    function isExportDefaultDeclaration(node) {
+      return node.type === 'ExportDefaultDeclaration'
+    }
+
+    function WaterfallFunctionArgs(node) {
       const objectParams = node.params.filter(isObjectPattern)
 
       objectParams.forEach(objParam => {
@@ -45,7 +49,7 @@ const WaterfallObjects = {
     }
     return {
       'ObjectExpression:exit': function(node) {
-        if (node.parent.type === 'ExportDefaultDeclaration') return
+        if (isExportDefaultDeclaration(node.parent.type)) return
 
         const properties = node.properties
         if (properties.length === 0) return
@@ -68,9 +72,9 @@ const WaterfallObjects = {
         }
       },
 
-      'MethodDefinition:exit': FunctionDeclarationHandler,
-      'FunctionDeclaration:exit': FunctionDeclarationHandler,
-      'ArrowFunctionExpression:exit': FunctionDeclarationHandler,
+      'MethodDefinition:exit': WaterfallFunctionArgs,
+      'FunctionDeclaration:exit': WaterfallFunctionArgs,
+      'ArrowFunctionExpression:exit': WaterfallFunctionArgs,
     }
   }
 }
