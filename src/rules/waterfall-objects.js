@@ -35,7 +35,7 @@ const WaterfallObjects = {
           
           context.report({
             node,
-            message: 'Arguments should be sorted by line length',
+            message: 'Object properties should be sorted by line length',
             fix: function(fixer) {
               return fixer.replaceTextRange(range, text)
             }
@@ -45,6 +45,8 @@ const WaterfallObjects = {
     }
     return {
       'ObjectExpression:exit': function(node) {
+        if (node.parent.type === 'ExportDefaultDeclaration') return
+
         const properties = node.properties
         if (properties.length === 0) return
         const sortedProperties = [...properties].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
@@ -58,7 +60,7 @@ const WaterfallObjects = {
           
           context.report({
             node,
-            message: 'Objects properties should be sorted by line length',
+            message: 'Object properties should be sorted by line length',
             fix: function(fixer) {
               return fixer.replaceTextRange(range, text)
             }
