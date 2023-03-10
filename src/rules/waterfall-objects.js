@@ -68,8 +68,8 @@ const WaterfallObjects = {
         }
       },
 
+      'MethodDefinition:exit': FunctionDeclarationHandler,
       'FunctionDeclaration:exit': FunctionDeclarationHandler,
-
       'ArrowFunctionExpression:exit': FunctionDeclarationHandler,
     }
   }
