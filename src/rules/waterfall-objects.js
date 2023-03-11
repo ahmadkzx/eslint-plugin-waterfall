@@ -22,6 +22,10 @@ const WaterfallObjects = {
       return node.type === 'ExportDefaultDeclaration'
     }
 
+    function isNotSpreadElement(node) {
+      return node.type !== 'SpreadElement'
+    }
+
     function WaterfallFunctionArgs(node) {
       if (!node.params) return
       
@@ -53,7 +57,7 @@ const WaterfallObjects = {
       'ObjectExpression:exit': function(node) {
         if (isExportDefaultDeclaration(node.parent)) return
 
-        const properties = node.properties
+        const properties = node.properties.filter(isNotSpreadElement)
         if (properties.length === 0) return
         const sortedProperties = [...properties].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
 
