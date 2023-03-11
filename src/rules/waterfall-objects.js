@@ -23,6 +23,8 @@ const WaterfallObjects = {
     }
 
     function WaterfallFunctionArgs(node) {
+      if (!node.params) return
+      
       const objectParams = node.params.filter(isObjectPattern)
 
       objectParams.forEach(objParam => {
