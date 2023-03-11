@@ -21,7 +21,7 @@ function getReplaceRange(nodes) {
 function fixIndent(str) {
   const lines = str.split('\n')
   if (lines.length < 2) return str
-  const lastLineIndent = lines[lines.length - 2].match(/^\s*/)[0]
+  const lastLineIndent = lines[lines.length - 1].match(/^\s*/)[0]
   lines[0] = lastLineIndent + lines[0].trim()
   return lines.join('\n')
 }
