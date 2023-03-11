@@ -1,12 +1,11 @@
-function getLineLength(importDeclaration, src) {
-  const loc = importDeclaration.loc.start
-  const lineText = src.lines[loc.line - 1]
-  return lineText.length
+function getNodeLength(node, src) {
+  const text = src.getText(node)
+  return text.length
 }
 
 function sortByLength(nodeA, nodeB, src) {
-  const lengthA = getLineLength(nodeA, src);
-  const lengthB = getLineLength(nodeB, src);
+  const lengthA = getNodeLength(nodeA, src);
+  const lengthB = getNodeLength(nodeB, src);
   return lengthA - lengthB;
 }
 
@@ -29,7 +28,7 @@ function fixIndent(str) {
 module.exports = {
   fixIndent,
   sortByLength,
-  getLineLength,
+  getNodeLength,
   getNodesTexts,
   getReplaceRange,
 }
