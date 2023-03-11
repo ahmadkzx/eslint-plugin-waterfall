@@ -20,7 +20,7 @@ Then configure the rules you want to use under the rules section:
 
     {
       "rules": {
-        "waterfall/waterfall-objects": "error,
+        "waterfall/waterfall-objects": "error",
         "waterfall/waterfall-imports": "error",
         "waterfall/waterfall-requires": "error",
       }
