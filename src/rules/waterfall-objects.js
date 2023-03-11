@@ -26,10 +26,18 @@ const WaterfallObjects = {
       return node.type !== 'SpreadElement'
     }
 
+    function isMultiLine(node) {
+      return src.getText(node).includes('\n')
+    }
+
+    function isSingleLine(node) {
+      return !isMultiLine(node)
+    }
+
     function WaterfallFunctionArgs(node) {
       if (!node.params) return
       
-      const objectParams = node.params.filter(isObjectPattern)
+      const objectParams = node.params.filter(isObjectPattern).filter(isMultiLine)
 
       objectParams.forEach(objParam => {
         const properties = objParam.properties
@@ -55,6 +63,7 @@ const WaterfallObjects = {
     }
     return {
       'ObjectExpression:exit': function(node) {
+        if (isSingleLine(node)) return
         if (isExportDefaultDeclaration(node.parent)) return
 
         const properties = node.properties.filter(isNotSpreadElement)
