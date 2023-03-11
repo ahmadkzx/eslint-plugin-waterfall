@@ -51,7 +51,7 @@ const WaterfallObjects = {
     }
     return {
       'ObjectExpression:exit': function(node) {
-        if (isExportDefaultDeclaration(node.parent.type)) return
+        if (isExportDefaultDeclaration(node.parent)) return
 
         const properties = node.properties
         if (properties.length === 0) return
