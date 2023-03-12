@@ -1,7 +1,7 @@
 ## ESLint Plugin Waterfall
 Write code like waterfall. more beautiful more readable.
 
-![ESLint Plugin Waterfall](https://user-images.githubusercontent.com/69081259/224127299-f1ebdfbf-1bf7-4f63-9897-27879997e24a.svg)
+![ESLint Plugin Waterfall](https://user-images.githubusercontent.com/69081259/224570172-e0cd45ce-a55f-49d7-aaa5-9a466c3e6740.svg)
 
 ### Installation
 
