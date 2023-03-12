@@ -1,4 +1,4 @@
-const { sortByLength, getReplaceRange, getNodesTexts } = require('../utils')
+const { sortByLength, getReplaceRange, getNodesTexts, applyObjectPropertiesIndent } = require('../utils')
 
 const WaterfallObjects = {
   meta: {
@@ -48,7 +48,9 @@ const WaterfallObjects = {
         const sortedPropertiesText = getNodesTexts(sortedProperties, src).join('')
 
         if (sortedPropertiesText !== propertiesText) {
-          const text = getNodesTexts(sortedProperties, src)
+          let text = getNodesTexts(sortedProperties, src)
+          text = applyObjectPropertiesIndent(text, /*object node*/ node, src)
+          text = text.join(',\n')
           const range = getReplaceRange(properties)
           
           context.report({
@@ -74,7 +76,9 @@ const WaterfallObjects = {
         const sortedPropertiesText = getNodesTexts(sortedProperties, src).join('')
 
         if (sortedPropertiesText !== propertiesText) {
-          const text = getNodesTexts(sortedProperties, src)
+          let text = getNodesTexts(sortedProperties, src)
+          text = applyObjectPropertiesIndent(text, /*object node*/ node, src)
+          text = text.join(',\n')
           const range = getReplaceRange(properties)
           
           context.report({

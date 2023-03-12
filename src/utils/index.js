@@ -56,10 +56,40 @@ function fixIndent(str) {
   return lines.join('\n')
 }
 
+/**
+ * Get object properties indent by catch first property indent
+ * @param {string[]} properties
+ * @param objectNode - ESTree AST nodes
+ * @param src - Source context
+ * @returns {string}
+ */
+function applyObjectPropertiesIndent(properties, objectNode, src) {
+  const text = src.getText(objectNode)
+  /*
+   {
+    test: 1,
+    ...
+   }
+  */
+ const lines = text.split('\n') // => ['{', ' test: 1,', ...]
+ const indentStr = lines[1].match(/^\s*/)[0]
+
+ return properties.map((prop, i) => {
+  if (i === 0 /*first prop always has indent*/) {
+    return prop
+  } else {
+    return indentStr + prop
+  }
+ })
+}
+
+
+
 module.exports = {
   fixIndent,
   sortByLength,
   getNodeLength,
   getNodesTexts,
   getReplaceRange,
+  applyObjectPropertiesIndent
 }
