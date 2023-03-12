@@ -16,5 +16,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ahmadkzx/eslint-waterfall.git"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/ahmadkzx/eslint-plugin-waterfall/issues"
+  },
+  "homepage": "https://github.com/ahmadkzx/eslint-plugin-waterfall#readme"
 }
