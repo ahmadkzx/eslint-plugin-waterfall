@@ -2,12 +2,12 @@ const { sortByLength, getReplaceRange, getNodesTexts } = require('../utils')
 
 const WaterfallImports = {
   meta: {
-    type: 'suggestion',
     fixable: true,
+    type: 'suggestion',
     docs: {
-      description: 'Sort all imports by line length',
-      category: 'Stylistic Issues',
       recommended: true,
+      category: 'Stylistic Issues',
+      description: 'Sort all imports by line length',
     }
   },
 

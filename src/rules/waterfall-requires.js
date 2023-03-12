@@ -2,12 +2,12 @@ const { sortByLength, getReplaceRange, getNodesTexts } = require('../utils')
 
 const WaterfallRequires = {
   meta: {
-    type: 'suggestion',
     fixable: true,
+    type: 'suggestion',
     docs: {
-      description: 'Sort all requires by line length',
-      category: 'Stylistic Issues',
       recommended: true,
+      category: 'Stylistic Issues',
+      description: 'Sort all requires by line length',
     }
   },
 
@@ -17,11 +17,12 @@ const WaterfallRequires = {
     function isRequireDeclaration(node) {
       if (node.type === 'VariableDeclaration') {
         const text = src.getText(node)
-        const textParts = text.split('=')
-
+        const textParts = text.split('=') // const test = require("test") => ['const test ', ' require("test")']
+        
         return textParts[1] && textParts[1].trim().startsWith('require(')
 
       } else if (node.type === 'ExpressionStatement') {
+        // for requires expressions that not storing in a variable like: require('./index.css')
         return node.expression && node.expression.callee && node.expression.callee.name === 'require'
       }
 

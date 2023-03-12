@@ -2,12 +2,12 @@ const { sortByLength, getReplaceRange, getNodesTexts } = require('../utils')
 
 const WaterfallObjects = {
   meta: {
-    type: 'suggestion',
     fixable: true,
+    type: 'suggestion',
     docs: {
-      description: 'Sort all object properties by line length',
-      category: 'Stylistic Issues',
       recommended: true,
+      category: 'Stylistic Issues',
+      description: 'Sort all object properties by line length',
     }
   },
 
@@ -64,7 +64,7 @@ const WaterfallObjects = {
     return {
       'ObjectExpression:exit': function(node) {
         if (isSingleLine(node)) return
-        if (isExportDefaultDeclaration(node.parent)) return
+        if (isExportDefaultDeclaration(node.parent)) return // only for ignoring vue options api
 
         const properties = node.properties.filter(isNotSpreadElement)
         if (properties.length === 0) return
