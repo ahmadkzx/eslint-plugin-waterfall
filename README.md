@@ -1,5 +1,6 @@
 ## ESLint Plugin Waterfall
-Write code like waterfall. more beautiful more readable.
+Write code like waterfall. more beautiful more readable.   
+Sort Object Properties, Imports and Requires by line length.
 
 ![ESLint Plugin Waterfall](https://user-images.githubusercontent.com/69081259/224570172-e0cd45ce-a55f-49d7-aaa5-9a466c3e6740.svg)
 
