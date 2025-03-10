@@ -39,16 +39,25 @@ const WaterfallRequires = {
         const sortedRequireDeclarationsText = getNodesTexts(sortedRequireDeclarations, src).join('')
 
         if (sortedRequireDeclarationsText !== requireDeclarationsText) {
-          const text = getNodesTexts(sortedRequireDeclarations, src).join('\n')
-          const range = getReplaceRange(requireDeclarations)
+          // Find requires that are out of order
+          const outOfOrderRequires = requireDeclarations.filter((requireNode, index) => {
+            return requireNode !== sortedRequireDeclarations[index];
+          });
           
-          context.report({
-            node,
-            message: 'Requires should be sorted by line length',
-            fix: function(fixer) {
-              return fixer.replaceTextRange(range, text)
-            }
-          })
+          // Report on the first out-of-order require
+          if (outOfOrderRequires.length > 0) {
+            // We still need a single fix that replaces all requires
+            const text = getNodesTexts(sortedRequireDeclarations, src).join('\n')
+            const range = getReplaceRange(requireDeclarations)
+            
+            context.report({
+              node: outOfOrderRequires[0],
+              message: 'Requires should be sorted by line length',
+              fix: function(fixer) {
+                return fixer.replaceTextRange(range, text)
+              }
+            })
+          }
         }
       }
     }
