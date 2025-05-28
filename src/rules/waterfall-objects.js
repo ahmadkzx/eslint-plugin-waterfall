@@ -48,18 +48,25 @@ const WaterfallObjects = {
         const sortedPropertiesText = getNodesTexts(sortedProperties, src).join('')
 
         if (sortedPropertiesText !== propertiesText) {
-          let text = getNodesTexts(sortedProperties, src)
-          text = applyObjectPropertiesIndent(text, /*object node*/ node, src)
-          text = text.join(',\n')
-          const range = getReplaceRange(properties)
+          // Find properties that are out of order
+          const outOfOrderProperties = properties.filter((propNode, index) => {
+            return propNode !== sortedProperties[index];
+          });
           
-          context.report({
-            node,
-            message: 'Object properties should be sorted by line length',
-            fix: function(fixer) {
-              return fixer.replaceTextRange(range, text)
-            }
-          })
+          if (outOfOrderProperties.length > 0) {
+            let text = getNodesTexts(sortedProperties, src)
+            text = applyObjectPropertiesIndent(text, /*object node*/ node, src)
+            text = text.join(',\n')
+            const range = getReplaceRange(properties)
+            
+            context.report({
+              node: outOfOrderProperties[0],
+              message: 'Object properties should be sorted by line length',
+              fix: function(fixer) {
+                return fixer.replaceTextRange(range, text)
+              }
+            })
+          }
         }
       })
     }
@@ -76,18 +83,25 @@ const WaterfallObjects = {
         const sortedPropertiesText = getNodesTexts(sortedProperties, src).join('')
 
         if (sortedPropertiesText !== propertiesText) {
-          let text = getNodesTexts(sortedProperties, src)
-          text = applyObjectPropertiesIndent(text, /*object node*/ node, src)
-          text = text.join(',\n')
-          const range = getReplaceRange(properties)
+          // Find properties that are out of order
+          const outOfOrderProperties = properties.filter((propNode, index) => {
+            return propNode !== sortedProperties[index];
+          });
           
-          context.report({
-            node,
-            message: 'Object properties should be sorted by line length',
-            fix: function(fixer) {
-              return fixer.replaceTextRange(range, text)
-            }
-          })
+          if (outOfOrderProperties.length > 0) {
+            let text = getNodesTexts(sortedProperties, src)
+            text = applyObjectPropertiesIndent(text, /*object node*/ node, src)
+            text = text.join(',\n')
+            const range = getReplaceRange(properties)
+            
+            context.report({
+              node: outOfOrderProperties[0],
+              message: 'Object properties should be sorted by line length',
+              fix: function(fixer) {
+                return fixer.replaceTextRange(range, text)
+              }
+            })
+          }
         }
       },
 
