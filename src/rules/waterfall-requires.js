@@ -1,8 +1,15 @@
-const { sortByLength, getReplaceRange, getNodesTexts } = require('../utils')
+const {
+  sortByLength,
+  splitIntoRuns,
+  getSourceCode,
+  getNodesTexts,
+  getReplaceRange,
+  hasCommentsInRange,
+} = require('../utils')
 
 const WaterfallRequires = {
   meta: {
-    fixable: true,
+    fixable: 'code',
     type: 'suggestion',
     docs: {
       recommended: true,
@@ -12,7 +19,7 @@ const WaterfallRequires = {
   },
 
   create(context) {
-    const src = context.getSourceCode()
+    const src = getSourceCode(context)
 
     function isRequireDeclaration(node) {
       if (node.type === 'VariableDeclaration') {
@@ -29,36 +36,26 @@ const WaterfallRequires = {
       return false
     }
 
+    function reportRun(nodes) {
+      if (nodes.length < 2) return
+
+      const sortedNodes = [...nodes].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
+      const outOfOrderNodes = nodes.filter((item, index) => item !== sortedNodes[index])
+      if (outOfOrderNodes.length === 0) return
+
+      const range = getReplaceRange(nodes)
+      const text = getNodesTexts(sortedNodes, src).join('\n')
+
+      context.report({
+        node: outOfOrderNodes[0],
+        message: 'Requires should be sorted by line length',
+        fix: hasCommentsInRange(src, range) ? null : fixer => fixer.replaceTextRange(range, text),
+      })
+    }
+
     return {
       'Program:exit': function(node) {
-        const requireDeclarations = node.body.filter(isRequireDeclaration)
-        if (requireDeclarations.length === 0) return
-        const sortedRequireDeclarations = [...requireDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
-
-        const requireDeclarationsText = getNodesTexts(requireDeclarations, src).join('')
-        const sortedRequireDeclarationsText = getNodesTexts(sortedRequireDeclarations, src).join('')
-
-        if (sortedRequireDeclarationsText !== requireDeclarationsText) {
-          // Find requires that are out of order
-          const outOfOrderRequires = requireDeclarations.filter((requireNode, index) => {
-            return requireNode !== sortedRequireDeclarations[index];
-          });
-          
-          // Report on the first out-of-order require
-          if (outOfOrderRequires.length > 0) {
-            // We still need a single fix that replaces all requires
-            const text = getNodesTexts(sortedRequireDeclarations, src).join('\n')
-            const range = getReplaceRange(requireDeclarations)
-            
-            context.report({
-              node: outOfOrderRequires[0],
-              message: 'Requires should be sorted by line length',
-              fix: function(fixer) {
-                return fixer.replaceTextRange(range, text)
-              }
-            })
-          }
-        }
+        splitIntoRuns(node.body, isRequireDeclaration).forEach(reportRun)
       }
     }
   }

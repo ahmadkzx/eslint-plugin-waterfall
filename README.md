@@ -27,6 +27,9 @@ Then configure the rules you want to use under the rules section:
       }
     }
 
+### Safe fixes
+Each rule sorts only runs of neighbouring nodes. A spread (`...extra`), a rest element (`...rest`) or any other statement ends a run and never moves, so the fix cannot drop or reorder code around it. A run that contains a comment is reported without an automatic fix, so comments such as `// eslint-disable-next-line` are never lost.
+
 ### Rules
 waterfall-objects:
 

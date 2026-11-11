@@ -85,11 +85,36 @@ function applyObjectPropertiesIndent(properties, objectNode, src) {
 
 
 
+function splitIntoRuns(nodes, isSortable) {
+  const runs = [[]]
+
+  nodes.forEach(node => {
+    if (isSortable(node)) {
+      runs[runs.length - 1].push(node)
+    } else if (runs[runs.length - 1].length > 0) {
+      runs.push([])
+    }
+  })
+
+  return runs.filter(run => run.length > 0)
+}
+
+function hasCommentsInRange(src, range) {
+  return src.getAllComments().some(comment => comment.range[0] >= range[0] && comment.range[1] <= range[1])
+}
+
+function getSourceCode(context) {
+  return context.sourceCode || context.getSourceCode()
+}
+
 module.exports = {
   fixIndent,
   sortByLength,
   getNodeLength,
   getNodesTexts,
+  splitIntoRuns,
+  getSourceCode,
   getReplaceRange,
+  hasCommentsInRange,
   applyObjectPropertiesIndent
 }

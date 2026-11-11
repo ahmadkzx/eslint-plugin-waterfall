@@ -1,8 +1,15 @@
-const { sortByLength, getReplaceRange, getNodesTexts } = require('../utils')
+const {
+  sortByLength,
+  splitIntoRuns,
+  getSourceCode,
+  getNodesTexts,
+  getReplaceRange,
+  hasCommentsInRange,
+} = require('../utils')
 
 const WaterfallImports = {
   meta: {
-    fixable: true,
+    fixable: 'code',
     type: 'suggestion',
     docs: {
       recommended: true,
@@ -12,43 +19,32 @@ const WaterfallImports = {
   },
 
   create(context) {
-    const src = context.getSourceCode()
+    const src = getSourceCode(context)
 
     function isImportDeclaration(node) {
       return node.type === 'ImportDeclaration'
     }
 
+    function reportRun(nodes) {
+      if (nodes.length < 2) return
+
+      const sortedNodes = [...nodes].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
+      const outOfOrderNodes = nodes.filter((item, index) => item !== sortedNodes[index])
+      if (outOfOrderNodes.length === 0) return
+
+      const range = getReplaceRange(nodes)
+      const text = getNodesTexts(sortedNodes, src).join('\n')
+
+      context.report({
+        node: outOfOrderNodes[0],
+        message: 'Imports should be sorted by line length',
+        fix: hasCommentsInRange(src, range) ? null : fixer => fixer.replaceTextRange(range, text),
+      })
+    }
+
     return {
       'Program:exit': function(node) {
-        const importDeclarations = node.body.filter(isImportDeclaration)
-        if (importDeclarations.length === 0) return
-        const sortedImportDeclarations = [...importDeclarations].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
-
-        const importDeclarationsText = getNodesTexts(importDeclarations, src).join('')
-        const sortedImportDeclarationsText = getNodesTexts(sortedImportDeclarations, src).join('')
-
-        if (sortedImportDeclarationsText !== importDeclarationsText) {
-          // Find imports that are out of order
-          const outOfOrderImports = importDeclarations.filter((importNode, index) => {
-            return importNode !== sortedImportDeclarations[index];
-          });
-          
-          // Report on each out-of-order import
-          if (outOfOrderImports.length > 0) {
-            // We still need a single fix that replaces all imports
-            const text = getNodesTexts(sortedImportDeclarations, src).join('\n')
-            const range = getReplaceRange(importDeclarations)
-            
-            // Report on the first out-of-order import
-            context.report({
-              node: outOfOrderImports[0],
-              message: 'Imports should be sorted by line length',
-              fix: function(fixer) {
-                return fixer.replaceTextRange(range, text)
-              }
-            })
-          }
-        }
+        splitIntoRuns(node.body, isImportDeclaration).forEach(reportRun)
       }
     }
   }
