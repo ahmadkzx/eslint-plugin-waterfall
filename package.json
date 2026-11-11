@@ -4,7 +4,7 @@
   "description": "Write code like waterfall. more beautiful more readable",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test"
   },
   "keywords": [
     "eslint",
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/ahmadkzx/eslint-plugin-waterfall/issues"
   },
-  "homepage": "https://github.com/ahmadkzx/eslint-plugin-waterfall#readme"
+  "homepage": "https://github.com/ahmadkzx/eslint-plugin-waterfall#readme",
+  "devDependencies": {
+    "eslint": "^9.39.5"
+  }
 }

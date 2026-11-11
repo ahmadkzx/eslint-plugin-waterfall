@@ -1,8 +1,16 @@
-const { sortByLength, getReplaceRange, getNodesTexts, applyObjectPropertiesIndent } = require('../utils')
+const {
+  sortByLength,
+  splitIntoRuns,
+  getSourceCode,
+  getNodesTexts,
+  getReplaceRange,
+  hasCommentsInRange,
+  applyObjectPropertiesIndent,
+} = require('../utils')
 
 const WaterfallObjects = {
   meta: {
-    fixable: true,
+    fixable: 'code',
     type: 'suggestion',
     docs: {
       recommended: true,
@@ -12,7 +20,7 @@ const WaterfallObjects = {
   },
 
   create(context) {
-    const src = context.getSourceCode()
+    const src = getSourceCode(context)
 
     function isObjectPattern(node) {
       return node.type === 'ObjectPattern'
@@ -22,87 +30,47 @@ const WaterfallObjects = {
       return node.type === 'ExportDefaultDeclaration'
     }
 
-    function isNotSpreadElement(node) {
-      return node.type !== 'SpreadElement'
+    function isProperty(node) {
+      return node.type === 'Property'
     }
 
     function isMultiLine(node) {
       return src.getText(node).includes('\n')
     }
 
-    function isSingleLine(node) {
-      return !isMultiLine(node)
+    function reportRun(properties, objectNode) {
+      if (properties.length < 2) return
+
+      const sortedProperties = [...properties].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
+      const outOfOrderProperties = properties.filter((propNode, index) => propNode !== sortedProperties[index])
+      if (outOfOrderProperties.length === 0) return
+
+      const range = getReplaceRange(properties)
+      const text = applyObjectPropertiesIndent(getNodesTexts(sortedProperties, src), objectNode, src).join(',\n')
+
+      context.report({
+        node: outOfOrderProperties[0],
+        message: 'Object properties should be sorted by line length',
+        fix: hasCommentsInRange(src, range) ? null : fixer => fixer.replaceTextRange(range, text),
+      })
+    }
+
+    function reportObject(objectNode) {
+      splitIntoRuns(objectNode.properties, isProperty).forEach(run => reportRun(run, objectNode))
     }
 
     function WaterfallFunctionArgs(node) {
       if (!node.params) return
-      
-      const objectParams = node.params.filter(isObjectPattern).filter(isMultiLine)
 
-      objectParams.forEach(objParam => {
-        const properties = objParam.properties
-        if (!properties || properties.length === 0) return
-        const sortedProperties = [...properties].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
-
-        const propertiesText = getNodesTexts(properties, src).join('')
-        const sortedPropertiesText = getNodesTexts(sortedProperties, src).join('')
-
-        if (sortedPropertiesText !== propertiesText) {
-          // Find properties that are out of order
-          const outOfOrderProperties = properties.filter((propNode, index) => {
-            return propNode !== sortedProperties[index];
-          });
-          
-          if (outOfOrderProperties.length > 0) {
-            let text = getNodesTexts(sortedProperties, src)
-            text = applyObjectPropertiesIndent(text, /*object node*/ node, src)
-            text = text.join(',\n')
-            const range = getReplaceRange(properties)
-            
-            context.report({
-              node: outOfOrderProperties[0],
-              message: 'Object properties should be sorted by line length',
-              fix: function(fixer) {
-                return fixer.replaceTextRange(range, text)
-              }
-            })
-          }
-        }
-      })
+      node.params.filter(isObjectPattern).filter(isMultiLine).forEach(reportObject)
     }
+
     return {
       'ObjectExpression:exit': function(node) {
-        if (isSingleLine(node)) return
-        if (isExportDefaultDeclaration(node.parent)) return // only for ignoring vue options api
+        if (!isMultiLine(node)) return
+        if (isExportDefaultDeclaration(node.parent)) return
 
-        const properties = node.properties.filter(isNotSpreadElement)
-        if (properties.length === 0) return
-        const sortedProperties = [...properties].sort((nodeA, nodeB) => sortByLength(nodeA, nodeB, src))
-
-        const propertiesText = getNodesTexts(properties, src).join('')
-        const sortedPropertiesText = getNodesTexts(sortedProperties, src).join('')
-
-        if (sortedPropertiesText !== propertiesText) {
-          // Find properties that are out of order
-          const outOfOrderProperties = properties.filter((propNode, index) => {
-            return propNode !== sortedProperties[index];
-          });
-          
-          if (outOfOrderProperties.length > 0) {
-            let text = getNodesTexts(sortedProperties, src)
-            text = applyObjectPropertiesIndent(text, /*object node*/ node, src)
-            text = text.join(',\n')
-            const range = getReplaceRange(properties)
-            
-            context.report({
-              node: outOfOrderProperties[0],
-              message: 'Object properties should be sorted by line length',
-              fix: function(fixer) {
-                return fixer.replaceTextRange(range, text)
-              }
-            })
-          }
-        }
+        reportObject(node)
       },
 
       'MethodDefinition:exit': WaterfallFunctionArgs,
